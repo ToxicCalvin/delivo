@@ -1,0 +1,71 @@
+server:
+  port: 8080
+
+spring:
+  profiles:
+    active: dev
+  main:
+    allow-circular-references: true
+  datasource:
+    druid:
+      driver-class-name: ${delivo.datasource.driver-class-name}
+      url: jdbc:mysql://${delivo.datasource.host}:${delivo.datasource.port}/${delivo.datasource.database}?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+      username: ${delivo.datasource.username}
+      password: ${delivo.datasource.password}
+  redis:
+    host: ${delivo.redis.host}
+    port: ${delivo.redis.port}
+    password: ${delivo.redis.password}
+    database: ${delivo.redis.database}
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.delivo.entity
+  configuration:
+    map-underscore-to-camel-case: true
+
+logging:
+  level:
+    com:
+      delivo:
+        mapper: debug
+        service: info
+        controller: info
+
+delivo:
+  jwt:
+    admin-secret-key: itcast
+    admin-ttl: 7200000
+    admin-token-name: token
+    user-secret-key: itheima
+    user-ttl: 7200000
+    user-token-name: authentication
+  alioss:
+    endpoint: ${delivo.alioss.endpoint}
+    access-key-id: ${delivo.alioss.access-key-id}
+    access-key-secret: ${delivo.alioss.access-key-secret}
+    bucket-name: ${delivo.alioss.bucket-name}
+  wechat:
+    appid: ${delivo.wechat.appid}
+    secret: ${delivo.wechat.secret}
+    mchid : ${delivo.wechat.mchid}
+    mchSerialNo: ${delivo.wechat.mchSerialNo}
+    privateKeyFilePath: ${delivo.wechat.privateKeyFilePath}
+    apiV3Key: ${delivo.wechat.apiV3Key}
+    weChatPayCertFilePath: ${delivo.wechat.weChatPayCertFilePath}
+    notifyUrl: ${delivo.wechat.notifyUrl}
+    refundNotifyUrl: ${delivo.wechat.refundNotifyUrl}
+  shop:
+    address: Budapest V. kerület, Deák Ferenc utca 15.
+  baidu:
+    ak: your-ak
+
+langchain4j:
+  open-ai:
+    chat-model:
+      api-key: ${OPENAI_API_KEY:your-openai-api-key}
+      model-name: gpt-5.4-nano
+  dashscope:
+    embedding-model:
+      api-key: ${DASHSCOPE_API_KEY:your-dashscope-api-key}
+      model-name: text-embedding-v3

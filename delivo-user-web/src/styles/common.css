@@ -1,0 +1,61 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background-color: var(--page-bg-color);
+    color: var(--text-color-main);
+}
+
+#app {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+#app.app-portrait {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+#app.app-landscape {
+    max-width: 812px;
+    margin: 0 auto;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.h-full {
+    height: 100%;
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
