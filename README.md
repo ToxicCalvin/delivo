@@ -14,7 +14,9 @@ The project consists of two main components:
 
 **Customer Application:** Allows customers to browse menus, search for dishes, manage their shopping carts&address, place and pay for orders, and interact with an AI assistant to achieve some task.
 
-<img src="./docs/imgs/user-main.png" style="zoom:30%;" />
+<p align="center">
+  <img src="./docs/imgs/user-main.png" width="300" />
+</p>
 
 **Admin Dashboard:** Enables restaurant administrators to manage dishes and meal packages, process orders, manage employees, and view business and operational statistics.
 
@@ -45,7 +47,9 @@ The project consists of two main components:
 
 #### Single-message ordering (One step)
 
-<img src="./docs/imgs/ai_5.png" style="zoom:30%;" />
+<p align="center">
+  <img src="./docs/imgs/ai_5.png" width="600" />
+</p>
 
 - Other Supported Operations
 
