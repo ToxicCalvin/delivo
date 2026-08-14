@@ -90,11 +90,26 @@ Overall, this trade-off sacrifices some of the “intelligence” of the AI assi
 
 ### Limitation and onging improvement
 
+#### In-memory vector database and lack of hot-updating
 
+During the thesis work, to simplify development, the system uses an InMemoryEmbeddingStore which only resides in the local memory of the single JVM instance. Furthermore, dish embeddings are currently generated only once during the application startup phase. If a restaurant adds, updates, or deletes a dish via the management backend, the system does not support hot-updating the vector database.
 
-### 
+To resolve this, one good way is to use professional vector database and event-driven mechanism (such as Kafka or RabbitMQ).
+
+#### AI assistance limitation
+
+Under certain complex user requests, the current AI architecture may not provide a best user experience. 
+For example:
+1.User requries invloves complex and unperdictable parameters.
+“Remove the two most expensive spicy dishes from my shopping cart.”
+2.Requests involving conditional logic. (LLM can not reach the Database and Redis currently)
+“Do you have any mango-flavored ice cream? If there is, add one to my order, otherwise, just checkout.”
+
+#### Monolithic architecture
+
 
 ### Running the Project
+
 
 
 
