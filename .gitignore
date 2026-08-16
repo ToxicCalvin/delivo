@@ -40,3 +40,4 @@ mysql_data/
 redis_data/
 
 # dish embedding file
+delivo/service/data/dish-embeddings.json
