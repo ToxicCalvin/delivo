@@ -1,5 +1,45 @@
 ## Delivo - A food delivery platform with AI Assitance
 
+[![Java](https://img.shields.io/badge/Java-17-orange.svg)]() [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7-brightgreen.svg)]() [![Vue.js](https://img.shields.io/badge/Vue.js-3.x-blue.svg)]() [![Docker](https://img.shields.io/badge/Docker-compose-blue.svg)]() [![LangChain4j](https://img.shields.io/badge/LangChain4j-AI-blueviolet.svg)]() [![License](https://img.shields.io/badge/license-MIT-blue.svg)]()
+
+[toc]
+
+### Quick start with docker
+
+**Before start**
+- Make sure your pc installed Docker
+- Make sure you have an API key for embedding model and one more for the LLM. (Personally, I use gpt-5.4-nano and text-embedding-v3)
+
+
+**1. Clone the project and create a .env file under the project root directory.** 
+```bash
+git clone https://github.com/ToxicCalvin/delivo.git
+cd delivo
+touch .env
+```
+
+**2. Inside the .env file, configure your API keys:**
+
+```env
+DASHSCOPE_API_KEY=your_actual_embedding_model_api_key
+OPENAI_API_KEY=your_actual_llm_api_key
+```
+
+**3. Make sure your Docker is running, then use the following command to build and start the whole project:**
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+```
+
+*(To stop the project, run: `docker compose -f docker-compose.yml -f docker-compose.prod.yml down`)*
+
+**4. Access the applications in your browser:**
+
+- **User Web:** [http://localhost:8081](http://localhost:8081)
+- **Admin Web:** [http://localhost:8082](http://localhost:8082)
+  - *Default Admin Credentials:* Username: `admin` | Password: `123456`
+
+*(Note: Because the repository is named `delivo`, your local folder structure will have a nested `delivo/delivo` path for the Java backend code. If you wish to run the backend natively without Docker, ensure you `cd delivo` again before running Maven or Spring Boot commands.)*
 
 
 ### Project Overview
@@ -67,7 +107,11 @@ LangChain4j
 
 MySQL, MyBatis, Redis
 
-websocket
+Websocket
+
+Docker
+
+Git
 
 etc.
 
@@ -92,24 +136,29 @@ Overall, this trade-off sacrifices some of the “intelligence” of the AI assi
 
 #### In-memory vector database and lack of hot-updating
 
-During the thesis work, to simplify development, the system uses an InMemoryEmbeddingStore which only resides in the local memory of the single JVM instance. Furthermore, dish embeddings are currently generated only once during the application startup phase. If a restaurant adds, updates, or deletes a dish via the management backend, the system does not support hot-updating the vector database.
+During the thesis work, to simplify development, the system uses an InMemoryEmbeddingStore which only resides in the local memory of the single JVM instance. 
+Furthermore, dish embeddings are currently generated only once during the application startup phase. If a restaurant adds, updates, or deletes a dish via the management backend, the system does not support hot-updating the vector database.
 
 To resolve this, one good way is to use professional vector database and event-driven mechanism (such as Kafka or RabbitMQ).
 
 #### AI assistance limitation
 
-Under certain complex user requests, the current AI architecture may not provide a best user experience. 
+**Under some certain complex user requests, the current AI architecture may not provide a best user experience.**
+
 For example:
-1.User requries invloves complex and unperdictable parameters.
+
+**1.User requries invloves complex and unperdictable parameters.**
 “Remove the two most expensive spicy dishes from my shopping cart.”
-2.Requests involving conditional logic. (LLM can not reach the Database and Redis currently)
+**2.Requests involving conditional logic. (LLM can not reach the Database and Redis currently)**
 “Do you have any mango-flavored ice cream? If there is, add one to my order, otherwise, just checkout.”
 
 #### Monolithic architecture
 
+### Contact
+Zhang Junru -  joey1538293327@gmail.com
 
-### Running the Project
-
+### License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 
 
