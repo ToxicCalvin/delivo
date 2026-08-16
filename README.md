@@ -2,7 +2,15 @@
 
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)]() [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7-brightgreen.svg)]() [![Vue.js](https://img.shields.io/badge/Vue.js-3.x-blue.svg)]() [![Docker](https://img.shields.io/badge/Docker-compose-blue.svg)]() [![LangChain4j](https://img.shields.io/badge/LangChain4j-AI-blueviolet.svg)]() [![License](https://img.shields.io/badge/license-MIT-blue.svg)]()
 
-[toc]
+## Table of Contents
+- [Quick start with docker](#quick-start-with-docker)
+- [Project Overview](#project-overview)
+- [Key Features](#key-features)
+- [Technology Stack](#technology-stack)
+- [Core System Architecture](#core-system-architecture)
+- [Limitation and ongoing improvement](#limitation-and-onging-improvement)
+- [Contact](#contact)
+- [License](#license)
 
 ### Quick start with docker
 
