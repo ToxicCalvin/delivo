@@ -34,3 +34,9 @@ pnpm-debug.log*
 .env.development.local
 .env.test.local
 .env.production.local
+
+# Docker Data Volumes
+mysql_data/
+redis_data/
+
+# dish embedding file

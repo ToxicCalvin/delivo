@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  # No need to repeat mysql and redis in here.
+  delivo-backend:
+    build:
+      context: ./delivo       
+    container_name: delivo-backend
+    ports:
+      - "8080:8080"         
+    environment:
+      # SpringBoot will read environment variables in the format of UPPERCASE_UNDERSCORE and override the corresponding yml configuration.
+      - DELIVO_DATASOURCE_HOST=delivo-mysql
+      - DELIVO_REDIS_HOST=delivo-redis
+      # let docker-compose.yml read the external (or .env) variables and inject them into the container
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - mysql                 
+      - redis
+
+  # add a new container for the admin web frontend
+  delivo-admin-web:
+    build:
+      context: ./delivo-admin-web
+    container_name: delivo-admin-web
+    ports:
+      - "8082:80"             
+    depends_on:
+      - delivo-backend        
+
+  # add a new container for the user web frontend
+  delivo-user-web:
+    build:
+      context: ./delivo-user-web
+    container_name: delivo-user-web
+    ports:
+      - "8081:80"             
+    depends_on:
+      - delivo-backend
