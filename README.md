@@ -1,4 +1,4 @@
-## Delivo - A food delivery platform with AI Assitance
+## Delivo - A food delivery platform with An AI Assistant
 
 [![Java](https://img.shields.io/badge/Java-17-orange.svg)]() [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-2.7-brightgreen.svg)]() [![Vue.js](https://img.shields.io/badge/Vue.js-3.x-blue.svg)]() [![Docker](https://img.shields.io/badge/Docker-compose-blue.svg)]() [![LangChain4j](https://img.shields.io/badge/LangChain4j-AI-blueviolet.svg)]() [![License](https://img.shields.io/badge/license-MIT-blue.svg)]()
 
