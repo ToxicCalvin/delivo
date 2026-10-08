@@ -1,0 +1,79 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: delivo/pom.xml
+      - name: Run backend unit tests
+        run: mvn -B -f delivo/pom.xml test
+
+  web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    strategy:
+      matrix:
+        directory: [delivo-user-web, delivo-admin-web]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: ${{ matrix.directory }}/package-lock.json
+      - name: Install dependencies
+        working-directory: ${{ matrix.directory }}
+        run: npm ci
+      - name: Build web app
+        working-directory: ${{ matrix.directory }}
+        run: npm run build
+
+  deployment-config:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      USER_DOMAIN: demo.example.com
+      ADMIN_DOMAIN: admin.example.com
+      MYSQL_ROOT_PASSWORD: ci-placeholder
+      MYSQL_APP_PASSWORD: ci-placeholder
+      JWT_ADMIN_SECRET: ci-placeholder-long-enough-123456
+      JWT_USER_SECRET: ci-placeholder-long-enough-123456
+      OPENAI_API_KEY: ci-placeholder
+      DASHSCOPE_API_KEY: ci-placeholder
+      ADMIN_APP_PASSWORD: ci-placeholder
+      ADMIN_BASIC_AUTH_USER: demo-admin
+      ADMIN_BASIC_AUTH_HASH: '$2a$14$Zkx19XLiW6VYouLHR5NmfOFU0z2GTNmpkT/5qqR7hx4IjWJPDhjvG'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate Compose model
+        run: docker compose -f compose.public.yml config --quiet
+      - name: Validate temporary demo Compose model
+        run: docker compose -f compose.demo.yml --profile tunnel config --quiet
+      - name: Validate Caddy configuration
+        run: >-
+          docker run --rm
+          -e USER_DOMAIN -e ADMIN_DOMAIN
+          -e ADMIN_BASIC_AUTH_USER -e ADMIN_BASIC_AUTH_HASH
+          -v "$PWD/deploy/Caddyfile:/etc/caddy/Caddyfile:ro"
+          caddy:2 caddy validate --config /etc/caddy/Caddyfile
+      - name: Validate temporary demo Caddy configuration
+        run: >-
+          docker run --rm
+          -e ADMIN_BASIC_AUTH_USER -e ADMIN_BASIC_AUTH_HASH
+          -v "$PWD/deploy/Caddyfile.demo:/etc/caddy/Caddyfile:ro"
+          caddy:2 caddy validate --config /etc/caddy/Caddyfile

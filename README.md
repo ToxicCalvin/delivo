@@ -19,19 +19,35 @@
 - Make sure you have an API key for embedding model and one more for the LLM. (Personally, I use gpt-5.4-nano and text-embedding-v3)
 
 
-**1. Clone the project and create a .env file under the project root directory.** 
+**1. Clone the project and copy the environment template in the project root.**
 ```bash
 git clone https://github.com/ToxicCalvin/delivo.git
 cd delivo
-touch .env
+cp .env.example .env
 ```
 
-**2. Inside the .env file, configure your API keys:**
+On Windows PowerShell, use `Copy-Item .env.example .env` instead of `cp` if preferred.
+
+**2. Fill in all six values in `.env`:**
 
 ```env
-DASHSCOPE_API_KEY=your_actual_embedding_model_api_key
+MYSQL_ROOT_PASSWORD=use_a_unique_random_password
+MYSQL_APP_PASSWORD=use_a_different_random_password
+JWT_ADMIN_SECRET=use_a_random_string_at_least_32_characters_long
+JWT_USER_SECRET=use_another_random_string_at_least_32_characters_long
 OPENAI_API_KEY=your_actual_llm_api_key
+DASHSCOPE_API_KEY=your_actual_embedding_model_api_key
 ```
+
+Keep `.env` private. It is ignored by Git. The provided Compose files expose only the two web frontends on `127.0.0.1`; MySQL, Redis, and the backend stay on the Docker network. This setup is for **local use**, not public deployment.
+
+For a portfolio demo on a Linux server, follow the separate [public deployment guide](docs/public-demo-deploy.md). Do not publish the local Compose stack directly.
+
+For a free temporary HTTPS demo from your own computer, follow the [local Docker + Cloudflare Tunnel guide](docs/free-public-demo.md). On Windows, `./deploy/start-demo.ps1` prepares a separate demo database and prints the user and password-protected admin links.
+
+The [technical retrospective](docs/free-public-demo-retrospective.md) explains the original setup, deployment changes, file responsibilities, verification results, and remaining limits (in Chinese).
+
+GitHub Actions automatically runs backend tests, builds both frontends, and validates deployment configuration. See the [CI guide](docs/continuous-integration.md) and [run history](https://github.com/ToxicCalvin/delivo/actions/workflows/ci.yml).
 
 **3. Make sure your Docker is running, then use the following command to build and start the whole project:**
 
