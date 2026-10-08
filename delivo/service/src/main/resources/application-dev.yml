@@ -1,28 +1,28 @@
 delivo:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    host: localhost
+    host: ${DELIVO_DATASOURCE_HOST:localhost}
     port: 3306
     database: delivo
-    username: root
-    password:
+    username: ${DELIVO_DATASOURCE_USERNAME:root}
+    password: ${DELIVO_DATASOURCE_PASSWORD:}
   alioss:
-    endpoint: oss-cn-beijing.aliyuncs.com
-    access-key-id: your-access-key-id
-    access-key-secret: your-access-key-secret
-    bucket-name: your-bucket-name
+    endpoint: ${DELIVO_ALIOSS_ENDPOINT:}
+    access-key-id: ${DELIVO_ALIOSS_ACCESS_KEY_ID:}
+    access-key-secret: ${DELIVO_ALIOSS_ACCESS_KEY_SECRET:}
+    bucket-name: ${DELIVO_ALIOSS_BUCKET_NAME:}
   redis:
-    host: localhost
+    host: ${DELIVO_REDIS_HOST:localhost}
     port: 6379
-    password:
+    password: ${DELIVO_REDIS_PASSWORD:}
     database: 10
   wechat:
-    appid: wxffb3637a228223b8
-    secret: 84311df9199ecacdf4f12d27b6b9522d
-    mchid : 1561414331
-    mchSerialNo: 4B3B3DC35414AD50B1B755BAF8DE9CC7CF407606
-    privateKeyFilePath: D:\pay\apiclient_key.pem
-    apiV3Key: CZBK51236435wxpay435434323FFDuv3
-    weChatPayCertFilePath: D:\pay\wechatpay_166D96F876F45C7D07CE98952A96EC980368ACFC.pem
-    notifyUrl: https://58869fb.r2.cpolar.top/notify/paySuccess
-    refundNotifyUrl: https://58869fb.r2.cpolar.top/notify/refundSuccess
+    appid: ${DELIVO_WECHAT_APPID:}
+    secret: ${DELIVO_WECHAT_SECRET:}
+    mchid: ${DELIVO_WECHAT_MCHID:}
+    mchSerialNo: ${DELIVO_WECHAT_MCH_SERIAL_NO:}
+    privateKeyFilePath: ${DELIVO_WECHAT_PRIVATE_KEY_FILE_PATH:}
+    apiV3Key: ${DELIVO_WECHAT_API_V3_KEY:}
+    weChatPayCertFilePath: ${DELIVO_WECHAT_PAY_CERT_FILE_PATH:}
+    notifyUrl: ${DELIVO_WECHAT_NOTIFY_URL:}
+    refundNotifyUrl: ${DELIVO_WECHAT_REFUND_NOTIFY_URL:}

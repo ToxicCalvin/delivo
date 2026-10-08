@@ -27,7 +27,7 @@ public class AiChatController {
     @PostMapping("/chat")
     @ApiOperation("Talk to AI Assistant")
     public Result<String> chat(@RequestBody String message) {
-        log.info("Received AI chat message: {}", message);
+        log.debug("Received AI chat request");
         try {
             String sanitized = sanitizeMessage(message);
             if (sanitized == null || sanitized.trim().isEmpty()) {
@@ -38,7 +38,7 @@ public class AiChatController {
             return Result.success(envelope);
         } catch (Exception e) {
             log.error("AI chat failed", e);
-            return Result.error("AI service is currently unavailable. " + e.getMessage());
+            return Result.error("AI service is currently unavailable.");
         }
     }
 

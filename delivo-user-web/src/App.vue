@@ -82,6 +82,8 @@ function handleWsMessage(data: { type: number; orderId: number; reason?: string;
 
 function connectWebSocket(userId: string | number) {
   closeWebSocket();
+  // The public demo keeps this unauthenticated endpoint closed at the proxy.
+  if (import.meta.env.VITE_PUBLIC_DEMO === 'true') return;
   const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
   const wsUrl = `${protocol}//${window.location.host}/ws/${userId}`;
   console.log('[WS] connecting sid=', userId, 'url=', wsUrl);

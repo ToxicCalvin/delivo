@@ -1,0 +1,29 @@
+{$USER_DOMAIN} {
+    encode zstd gzip
+
+    # The public site can only call user APIs; real payment is disabled for demos.
+    handle /api/user/order/payment* {
+        respond "Real payment is unavailable in this demo" 404
+    }
+    handle /api/user/* {
+        reverse_proxy user-web:80
+    }
+    handle /api/* {
+        respond 404
+    }
+    # The current WebSocket server does not authenticate connections.
+    handle /ws/* {
+        respond 404
+    }
+    handle {
+        reverse_proxy user-web:80
+    }
+}
+
+{$ADMIN_DOMAIN} {
+    encode zstd gzip
+    basic_auth {
+        {$ADMIN_BASIC_AUTH_USER} {$ADMIN_BASIC_AUTH_HASH}
+    }
+    reverse_proxy admin-web:80
+}

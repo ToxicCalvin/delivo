@@ -1,23 +1,26 @@
-version: '3.8'
-
 services:
   # No need to repeat mysql and redis in here.
   delivo-backend:
     build:
       context: ./delivo       
     container_name: delivo-backend
-    ports:
-      - "8080:8080"         
     environment:
       # SpringBoot will read environment variables in the format of UPPERCASE_UNDERSCORE and override the corresponding yml configuration.
-      - DELIVO_DATASOURCE_HOST=delivo-mysql
-      - DELIVO_REDIS_HOST=delivo-redis
+      - DELIVO_DATASOURCE_HOST=mysql
+      - DELIVO_DATASOURCE_USERNAME=delivo
+      - DELIVO_DATASOURCE_PASSWORD=${MYSQL_APP_PASSWORD:?Set MYSQL_APP_PASSWORD in .env}
+      - DELIVO_REDIS_HOST=redis
+      - DELIVO_JWT_ADMIN_SECRET_KEY=${JWT_ADMIN_SECRET:?Set JWT_ADMIN_SECRET in .env}
+      - DELIVO_JWT_USER_SECRET_KEY=${JWT_USER_SECRET:?Set JWT_USER_SECRET in .env}
       # let docker-compose.yml read the external (or .env) variables and inject them into the container
-      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY}
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DASHSCOPE_API_KEY=${DASHSCOPE_API_KEY:?Set DASHSCOPE_API_KEY in .env}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:?Set OPENAI_API_KEY in .env}
     depends_on:
-      - mysql                 
-      - redis
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    restart: unless-stopped
 
   # add a new container for the admin web frontend
   delivo-admin-web:
@@ -25,7 +28,7 @@ services:
       context: ./delivo-admin-web
     container_name: delivo-admin-web
     ports:
-      - "8082:80"             
+      - "127.0.0.1:8082:80"
     depends_on:
       - delivo-backend        
 
@@ -35,6 +38,6 @@ services:
       context: ./delivo-user-web
     container_name: delivo-user-web
     ports:
-      - "8081:80"             
+      - "127.0.0.1:8081:80"
     depends_on:
       - delivo-backend

@@ -1,0 +1,38 @@
+delivo:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    host: mysql
+    port: 3306
+    database: delivo
+    username: delivo
+    password: ${DELIVO_DATASOURCE_PASSWORD}
+  redis:
+    host: redis
+    port: 6379
+    password: ""
+    database: 0
+  jwt:
+    admin-secret-key: ${DELIVO_JWT_ADMIN_SECRET_KEY}
+    user-secret-key: ${DELIVO_JWT_USER_SECRET_KEY}
+  alioss:
+    endpoint: ""
+    access-key-id: ""
+    access-key-secret: ""
+    bucket-name: ""
+  wechat:
+    appid: ""
+    secret: ""
+    mchid: ""
+    mchSerialNo: ""
+    privateKeyFilePath: ""
+    apiV3Key: ""
+    weChatPayCertFilePath: ""
+    notifyUrl: ""
+    refundNotifyUrl: ""
+
+logging:
+  level:
+    com.delivo: warn
+    com.delivo.mapper: warn
+    com.delivo.service: warn
+    com.delivo.controller: warn

@@ -7,6 +7,8 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+ARG VITE_PUBLIC_DEMO=false
+ENV VITE_PUBLIC_DEMO=$VITE_PUBLIC_DEMO
 RUN npm run build
 
 # Stage 2: Nginx environment run

@@ -1,27 +1,32 @@
-version: '3.8'
-
 services:
   # Service 1: MySQL Database
   mysql:
     image: mysql:8.0              
     container_name: delivo-mysql  
-    ports:
-      - "3306:3306"               
     environment:
-      - MYSQL_ROOT_PASSWORD=      
-      - MYSQL_ALLOW_EMPTY_PASSWORD=yes 
-      - MYSQL_DATABASE=delivo     
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env}
+      - MYSQL_DATABASE=delivo
+      - MYSQL_USER=delivo
+      - MYSQL_PASSWORD=${MYSQL_APP_PASSWORD:?Set MYSQL_APP_PASSWORD in .env}
     volumes:
       - ./mysql_data:/var/lib/mysql
       - ./delivo/sql/delivo-db.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u\"$$MYSQL_USER\" -p\"$$MYSQL_PASSWORD\" --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
     restart: always               
 
   # Service 2: Redis Cache
   redis:
     image: redis:7.0              
     container_name: delivo-redis
-    ports:
-      - "6379:6379"               
     volumes:
       - ./redis_data:/data        
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
     restart: always

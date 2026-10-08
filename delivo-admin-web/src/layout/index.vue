@@ -128,7 +128,8 @@ function resumeAudioOnce() {
 
 function initWebSocket() {
   const sid = (userStore.userInfo && userStore.userInfo.id) ? userStore.userInfo.id : 'admin'
-  const wsUrl = `ws://localhost:8080/ws/${sid}`
+  const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
+  const wsUrl = `${protocol}//${window.location.host}/ws/${sid}`
   ws = new WebSocket(wsUrl)
 
   ws.onmessage = (event) => {
