@@ -1,0 +1,42 @@
+{
+	auto_https off
+	admin off
+}
+
+:8080 {
+	encode zstd gzip
+	log {
+		output stdout
+		format json
+	}
+
+	# Keep real payment disabled, including requests with a trailing slash.
+	handle /api/user/order/payment* {
+		respond "Real payment is unavailable in this demo" 404
+	}
+	handle /api/user/* {
+		reverse_proxy user-web:80
+	}
+	handle /api/* {
+		respond 404
+	}
+	# The current backend does not authenticate WebSocket connections.
+	handle /ws/* {
+		respond 404
+	}
+	handle {
+		reverse_proxy user-web:80
+	}
+}
+
+:8081 {
+	encode zstd gzip
+	log {
+		output stdout
+		format json
+	}
+	basic_auth {
+		{$ADMIN_BASIC_AUTH_USER} {$ADMIN_BASIC_AUTH_HASH}
+	}
+	reverse_proxy admin-web:80
+}

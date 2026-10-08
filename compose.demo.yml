@@ -1,0 +1,111 @@
+name: delivo-demo
+
+x-logs: &logs
+  driver: local
+  options:
+    max-size: "10m"
+    max-file: "5"
+
+services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in .env.demo}
+      MYSQL_DATABASE: delivo
+      MYSQL_USER: delivo
+      MYSQL_PASSWORD: ${MYSQL_APP_PASSWORD:?Set MYSQL_APP_PASSWORD in .env.demo}
+      ADMIN_APP_PASSWORD: ${ADMIN_APP_PASSWORD:?Set ADMIN_APP_PASSWORD in .env.demo}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./delivo/sql/delivo-db.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+      - ./deploy/init-admin-password.sh:/docker-entrypoint-initdb.d/02-admin-password.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u\"$$MYSQL_USER\" -p\"$$MYSQL_PASSWORD\" --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 40
+    logging: *logs
+
+  redis:
+    image: redis:7.0
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    logging: *logs
+
+  delivo-backend:
+    build: ./delivo
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      DELIVO_DATASOURCE_HOST: mysql
+      DELIVO_DATASOURCE_USERNAME: delivo
+      DELIVO_DATASOURCE_PASSWORD: ${MYSQL_APP_PASSWORD:?Set MYSQL_APP_PASSWORD in .env.demo}
+      DELIVO_REDIS_HOST: redis
+      DELIVO_JWT_ADMIN_SECRET_KEY: ${JWT_ADMIN_SECRET:?Set JWT_ADMIN_SECRET in .env.demo}
+      DELIVO_JWT_USER_SECRET_KEY: ${JWT_USER_SECRET:?Set JWT_USER_SECRET in .env.demo}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:?Set OPENAI_API_KEY in .env.demo}
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:?Set DASHSCOPE_API_KEY in .env.demo}
+    volumes:
+      - ai_data:/app/data
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    logging: *logs
+
+  user-web:
+    build:
+      context: ./delivo-user-web
+      args:
+        VITE_PUBLIC_DEMO: "true"
+    depends_on:
+      - delivo-backend
+    logging: *logs
+
+  admin-web:
+    build: ./delivo-admin-web
+    depends_on:
+      - delivo-backend
+    logging: *logs
+
+  caddy:
+    image: caddy:2
+    environment:
+      ADMIN_BASIC_AUTH_USER: ${ADMIN_BASIC_AUTH_USER:?Set ADMIN_BASIC_AUTH_USER in .env.demo}
+      ADMIN_BASIC_AUTH_HASH: ${ADMIN_BASIC_AUTH_HASH:?Set ADMIN_BASIC_AUTH_HASH in .env.demo}
+    ports:
+      - "127.0.0.1:18081:8080"
+      - "127.0.0.1:18082:8081"
+    volumes:
+      - ./deploy/Caddyfile.demo:/etc/caddy/Caddyfile:ro
+    depends_on:
+      - user-web
+      - admin-web
+    logging: *logs
+
+  user-tunnel:
+    image: cloudflare/cloudflared:latest
+    command: ["tunnel", "--no-autoupdate", "--protocol", "http2", "--url", "http://caddy:8080"]
+    profiles: ["tunnel"]
+    depends_on:
+      - caddy
+    logging: *logs
+
+  admin-tunnel:
+    image: cloudflare/cloudflared:latest
+    command: ["tunnel", "--no-autoupdate", "--protocol", "http2", "--url", "http://caddy:8081"]
+    profiles: ["tunnel"]
+    depends_on:
+      - caddy
+    logging: *logs
+
+volumes:
+  mysql_data:
+  redis_data:
+  ai_data:
